@@ -22,10 +22,28 @@ describe("calculator",()=>{
     it.each`
         input | expected
         ${"7\n3"}|${10}
+        ${"2\n1\n3"}|${6}
     `("should handle new line characters and return the sum $expected when given the string '$input'",({input,expected})=>{
-        debugger;
         const result=add(input);
         expect(result).toBe(expected);
     })
+    it.each`
+        input | expected
+        ${"//;\n1;2"}|${3}
+        ${"//|\n1|2|3"}|${6}
+        ${"//'\n1'2'1"}|${4}
+    `("should be able to change the delimitor and return the sum $expected when given the string '$input'",({input,expected})=>{
+        const result=add(input);
+        expect(result).toBe(expected);
+    })
+    it.each`
+        input | expected
+        ${"//;\n1;-2"}|${"negatives not allowed -2"}
+        ${"//|\n-1|2|3"}|${"negatives not allowed -1"}
+        ${"//'\n1'-2'-1"}|${"negatives not allowed -2 -1"}
+    `("should be able to check for negative numbers and return the error $expected when given the string '$input'",({input,expected})=>{
+    const result=add(input);
+    expect(result).toBe(expected);
+})
 });
 
