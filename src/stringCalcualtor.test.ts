@@ -44,6 +44,33 @@ describe("calculator",()=>{
     `("should be able to check for negative numbers and return the error $expected when given the string '$input'",({input,expected})=>{
     const result=add(input);
     expect(result).toBe(expected);
-})
+    })
+    it.each`
+    input | expected
+    ${"//;\n1001;2"}|${2}
+    ${"//|\n1|2|3000"}|${3}
+    ${"//'\n1'21231'1"}|${2}
+    `("should ignore numbers greater than 1000 and return the sum $expected when given the string '$input'",({input,expected})=>{
+    const result=add(input);
+    expect(result).toBe(expected);
+    })
+    it.each`
+    input | expected
+    ${"//[;;;]\n1;;;2"}|${3}
+    ${"//[||]\n1||2||3"}|${6}
+    ${"//['''']\n1''''2''''1"}|${4}
+    `("should be able to have multiple of the delimitor and return the sum $expected when given the string '$input'",({input,expected})=>{
+    const result=add(input);
+    expect(result).toBe(expected);
+    })
+    it.each`
+    input | expected
+    ${"//[;;;][!!]\n1;;;2!!1"}|${4}
+    ${"//[||][#]\n1||2||3#4"}|${10}
+    ${"//[''''][@]\n1@2''''1"}|${4}
+    `("should be able to have multiple sized delimitors and return the sum $expected when given the string '$input'",({input,expected})=>{
+    const result=add(input);
+    expect(result).toBe(expected);
+    })
 });
 
