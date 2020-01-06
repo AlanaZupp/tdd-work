@@ -1,8 +1,14 @@
+import { delimiter } from "path";
+
+function escapeRegExp(string:string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+  }
+
 export const add =(input:string)=>{
     let neg="negatives not allowed";
     let delimiterGiven = undefined;
-    let delimiterMulti = undefined;
-    let values=undefined;
+    let delimiterMulti= undefined;
+    let values= undefined;
 
     //if empty
     if(input===''){
@@ -11,8 +17,9 @@ export const add =(input:string)=>{
 
     if(input.startsWith("//["))
     {
-        input.replace("]","[");
-        delimiterMulti= (input.substring(2,input.indexOf("\n")-1)).split(/[[]/);
+        input= input.replace(/]/g,"[");
+        delimiterMulti= (input.substring(2,input.indexOf("\n")-1)).split("[");
+        delimiterMulti = delimiterMulti.filter(delimiter => delimiter); //remove empty values
         input=input.substring(input.indexOf("\n")+1);
     }
     else if(input.startsWith("//"))
@@ -22,9 +29,8 @@ export const add =(input:string)=>{
     }
    
     if(delimiterMulti){
-        delimiterMulti.forEach(element => {
-           values= input.split(element);
-        });
+        const delimiterRegex = new RegExp(`(${delimiterMulti.map(delimiter=>escapeRegExp(delimiter)).join('|')})`);
+        values = input.split(delimiterRegex).filter(value=> delimiterMulti.indexOf(value)===-1);
     }
     else{
         values= input.split(delimiterGiven || /[,\n]/); //regular expresion 
